@@ -667,3 +667,44 @@ def test_acc_atomics_srtings():
     atomic = ACCAtomicDirective()
     assert atomic.begin_string() == "acc atomic"
     assert atomic.end_string() == "acc end atomic"
+# Class ACCWaitDirective
+
+# (1/1) Method __init__
+def test_accwaitdirective_init():
+    directive1 = ACCWaitDirective(None)
+    assert directive1.wait_queue == None
+
+    directive2 = ACCWaitDirective(None)
+    assert directive2.wait_queue == None
+
+    directive4 = ACCWaitDirective(1)
+    assert directive4.wait_queue == 1
+
+    directive4 = ACCWaitDirective(Signature("variable_name"))
+    assert directive4.wait_queue == Signature("variable_name")
+
+    with pytest.raises(TypeError):
+        directive5 = ACCWaitDirective(3.5)
+
+# (1/1) Method begin_string
+def test_accwaitdirective_begin_string():
+    directive1 = ACCWaitDirective(None)
+    assert directive1.begin_string() == "acc wait"
+
+    directive2 = ACCWaitDirective(None)
+    assert directive2.begin_string() == "acc wait"
+
+    directive3 = ACCWaitDirective(1)
+    assert directive3.begin_string() == "acc wait (1)"
+
+    directive4 = ACCWaitDirective(Signature("variable_name"))
+    assert directive4.begin_string() == "acc wait (variable_name)"
+
+# (1/1) Method gencode
+def test_accwaitdirective_gencode():
+    _, info = parse(os.path.join(BASE_PATH, "1_single_invoke.f90"))
+    psy = PSyFactory(distributed_memory=False).create(info)
+    routines = psy.container.walk(Routine)
+    routines[0].children.append(ACCWaitDirective(1))
+    code = str(psy.gen)
+    assert '$acc wait (1)' in code
