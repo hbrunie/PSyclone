@@ -76,23 +76,19 @@ from psyclone.psyir.nodes.structure_reference import StructureReference
 from psyclone.psyir.nodes.structure_member import StructureMember
 from psyclone.psyir.nodes.call import Call
 from psyclone.psyir.nodes.file_container import FileContainer
-from psyclone.psyir.nodes.directive import (
-    Directive, StandaloneDirective, RegionDirective)
-from psyclone.psyir.nodes.dynamic_omp_task_directive import (
-    DynamicOMPTaskDirective)
-from psyclone.psyir.nodes.acc_directives import (
-    ACCDirective, ACCLoopDirective, ACCEnterDataDirective,
-    ACCParallelDirective, ACCKernelsDirective, ACCDataDirective,
-    ACCUpdateDirective, ACCStandaloneDirective, ACCRegionDirective,
-    ACCRoutineDirective, ACCAtomicDirective)
-from psyclone.psyir.nodes.omp_directives import (
-    OMPDirective, OMPDoDirective, OMPParallelDirective,
-    OMPParallelDoDirective, OMPSingleDirective, OMPMasterDirective,
-    OMPSerialDirective, OMPTaskloopDirective, OMPTaskwaitDirective,
-    OMPStandaloneDirective, OMPRegionDirective, OMPTargetDirective,
-    OMPLoopDirective, OMPDeclareTargetDirective,
-    OMPTeamsDistributeParallelDoDirective, OMPAtomicDirective,
-    OMPSimdDirective)
+from psyclone.psyir.nodes.directive import Directive, StandaloneDirective, \
+    RegionDirective
+from psyclone.psyir.nodes.acc_directives import ACCDirective, \
+    ACCLoopDirective, ACCEnterDataDirective, ACCParallelDirective, \
+    ACCKernelsDirective, ACCDataDirective, ACCUpdateDirective, \
+    ACCStandaloneDirective, ACCRegionDirective, ACCRoutineDirective, \
+    ACCWaitDirective
+from psyclone.psyir.nodes.omp_directives import OMPDirective, OMPDoDirective, \
+    OMPParallelDirective, OMPParallelDoDirective, OMPSingleDirective, \
+    OMPMasterDirective, OMPSerialDirective, OMPTaskloopDirective, \
+    OMPTaskwaitDirective, OMPStandaloneDirective, OMPRegionDirective, \
+    OMPTargetDirective, OMPLoopDirective, OMPDeclareTargetDirective, \
+    OMPTeamsDistributeParallelDoDirective
 from psyclone.psyir.nodes.clause import Clause, OperandClause
 from psyclone.psyir.nodes.omp_clauses import (
     OMPGrainsizeClause, OMPNogroupClause, OMPNowaitClause, OMPNumTasksClause,
