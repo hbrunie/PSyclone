@@ -694,7 +694,7 @@ class ACCKernelsDirective(ACCRegionDirective):
     :param async_stream: Make the directive asynchonous and attached to the given
                          steam identified by an ID or by a variable name pointing to
                          an integer.
-    :type async_stream: bool or Signature or int
+    :type async_stream: bool/Signature/int
 
     '''
     def __init__(self, children=None, parent=None, default_present=True, async_queue=False):
@@ -974,7 +974,7 @@ class ACCUpdateDirective(ACCStandaloneDirective):
     def async_queue(self):
         '''
         :returns: whether or not to add the 'async' cleause and attach to which stream.
-        :rtype: str or int
+        :rtype: str/int
         '''
         return self._async_queue
 
@@ -1029,7 +1029,7 @@ class ACCUpdateDirective(ACCStandaloneDirective):
     @async_queue.setter
     def async_queue(self, async_queue):
         '''
-        :param bool async_stream: wheter or not to add the 'async' close
+        :param bool async_stream: whether or not to add the 'async' close
                                   and attach to which stream.
         '''
         # check
