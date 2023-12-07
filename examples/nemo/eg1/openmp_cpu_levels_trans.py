@@ -38,8 +38,8 @@
 directives into Nemo code. '''
 
 from __future__ import print_function
-from psyclone.psyGen import TransInfo
-from psyclone.nemo import NemoKern
+from psyclone.psyGen import TransInfo,Invoke
+from psyclone.nemo import NemoKern, NemoInvokeSchedule,NemoInvokes,NemoInvoke
 
 
 def trans(psy):
@@ -54,7 +54,29 @@ def trans(psy):
     '''
     omp_trans = TransInfo().get_trans_name('OMPParallelLoopTrans')
 
-    print("Invokes found:")
+    #print(psy._container.view())
+    #nemokerns = psy._container.walk(NemoKern)
+    nemoinvokeschedule = psy._container.walk(NemoInvokeSchedule)
+    nemoinvokes = psy._container.walk(NemoInvokes)
+    nemoinvoke = psy._container.walk(NemoInvoke)
+    print("Nemo Invoke Schedule found:")
+    for nis in nemoinvokeschedule:
+        print(nis.view())
+    print("Nemo Invokes found:")
+    for nis in nemoinvokes:
+        print(nis.view())
+    print("Nemo Invoke found:")
+    for nis in nemoinvoke:
+        print(nis.view())
+    #print("NemoKerns found:")
+    #for nk in nemokerns:
+    #    print("nk",nk)
+    #    print(" NK parent",nk._parent)
+    #    print(" NK parent parent",nk._parent._parent)
+    #    print(" NK parent parent parent",nk._parent._parent._parent)
+    #    print("nk view", nk.view())
+    assert False 
+    return
     for invoke in psy.invokes.invoke_list:
         print(invoke.name)
         for loop in invoke.schedule.loops():
