@@ -40,7 +40,7 @@
 import abc
 from fparser.common.readfortran import FortranStringReader
 from fparser.common.sourceinfo import FortranFormat
-from fparser.one.statements import Comment, Case
+from fparser.one.statements import Comment, Case, Statement
 from fparser.one.block_statements import SelectCase, SelectType, EndSelect
 from fparser.one.parsefortran import FortranParser
 # This alias is useful to refer to parts of fparser.one later but
@@ -77,6 +77,47 @@ def index_of_object(alist, obj):
 # This section subclasses the f2py comment class so that we can
 # reason about directives
 
+class NoCommentDirective(Statement):
+    '''
+    Base class for directives so we can reason about them when walking
+    the tree. Sub-classes the fparser1 Comment class.
+
+    :param root: the parent node in the AST to which we are adding the \
+                 directive
+    :type root: subclass of :py:class:`fparser.common.base_classes.Statement`
+    :param line: the fparser object which we will manipulate to create \
+                 the desired directive.
+    :type line: :py:class:`fparser.common.readfortran.Comment`
+    :param str position: e.g. 'begin' or 'end' (language specific)
+    :param str dir_type: the type of directive that this is (e.g. \
+                         'parallel do')
+    '''
+    def __init__(self, root, line, position, dir_type):
+        if dir_type not in self._types:
+            raise RuntimeError(f"Error, unrecognised directive type "
+                               f"'{dir_type}'. Should be one of {self._types}")
+        if position not in self._positions:
+            raise RuntimeError(f"Error, unrecognised position '{position}'. "
+                               f"Should be one of {self._positions}")
+        self._my_type = dir_type
+        self._position = position
+        Statement.__init__(self, root, line)
+
+    @property
+    def type(self):
+        '''
+        :returns: the type of this Directive.
+        :rtype: str
+        '''
+        return self._my_type
+
+    @property
+    def position(self):
+        '''
+        :returns: the position of this Directive ('begin' or 'end').
+        :rtype: str
+        '''
+        return self._position
 
 class Directive(Comment):
     '''
@@ -164,6 +205,27 @@ class ACCDirective(Directive):
         self._positions = ["begin", "end"]
 
         super(ACCDirective, self).__init__(root, line, position, dir_type)
+
+class AssociateDirective(NoCommentDirective):
+    '''
+    Subclass Directive for OpenACC directives so we can reason about them
+    when walking the tree.
+
+    :param root: the parent node in the AST to which we are adding the \
+                 directive.
+    :type root: subclass of :py:class:`fparser.common.base_classes.Statement`
+    :param line: the fparser object which we will manipulate to create \
+                 the desired directive.
+    :type line: :py:class:`fparser.common.readfortran.Comment`
+    :param str position: e.g. 'begin' or 'end' (language specific).
+    :param str dir_type: the type of directive that this is (e.g. \
+                         'loop').
+    '''
+    def __init__(self, root, line, position, dir_type):
+        self._types = ["parallel", "kernels", "enter data", "loop", "routine"]
+        self._positions = ["begin", "end"]
+
+        super(AssociateDirective, self).__init__(root, line, position, dir_type)
 
 
 # This section provides new classes which provide a relatively high
@@ -665,6 +727,10 @@ class DirectiveGen(BaseGen):
             my_comment = ACCDirective(parent.root, subline, position,
                                       directive_type)
             my_comment.content = "$acc"
+        elif language == "associate":
+            my_comment = AssociateDirective(parent.root, subline, position,
+                                      directive_type)
+            my_comment.content = ""
         else:
             raise RuntimeError(
                 f"Error, unsupported directive language. Expecting one of "
