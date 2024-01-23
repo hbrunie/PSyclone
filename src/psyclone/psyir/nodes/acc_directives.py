@@ -319,8 +319,9 @@ class ACCParallelDirective(ACCRegionDirective):
         'DEFAULT(PRESENT)' clause.
 
     '''
-    def __init__(self, children=None, parent=None, async_queue=False, **kwargs):
+    def __init__(self, present=True, children=None, parent=None, async_queue=False, **kwargs):
         super().__init__(children=children, parent=parent, **kwargs)
+        self._present = present
         self.async_queue = async_queue
 
     def __eq__(self, other):
@@ -397,9 +398,10 @@ class ACCParallelDirective(ACCRegionDirective):
         # all data required by the parallel region is already present
         # on the device. If we've made a mistake and it isn't present
         # then we'll get a run-time error.
-
-        # present
-        options = " default(present)"
+        if self._default_present:
+            options = " default(present)"
+        else:
+            options = ""
 
         # async
         options += _build_async_string(self._async_queue)
