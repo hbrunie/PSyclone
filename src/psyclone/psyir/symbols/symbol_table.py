@@ -548,7 +548,7 @@ class SymbolTable():
 
         self._symbols[key] = new_symbol
 
-    def check_for_clashes(self, other_table):
+    def check_for_clashes(self, other_table, include_arguments=True):
         '''
         Checks the symbols in the supplied table against those in
         this table. If there is a name clash that cannot be resolved by
@@ -561,7 +561,27 @@ class SymbolTable():
             when importing symbols from `other_table` into this table.
 
         '''
+        if include_arguments:
+            symbols_to_skip = []
+        else:
+            symbols_to_skip = other_table.argument_list[:]
+        try:
+            # In the case where the 'other_table' belongs to a routine,
+            # we don't want or need the symbol representing that routine.
+            rsym = other_table.lookup_with_tag("own_routine_symbol")
+            if isinstance(rsym, RoutineSymbol):
+                # We only want to skip RoutineSymbols, not DataSymbols (which
+                # we may have if we have a Fortran function).
+                symbols_to_skip.append(rsym)
+        except KeyError:
+            pass
+
+
         for other_sym in other_table.symbols:
+            if other_sym in symbols_to_skip or isinstance(other_sym,
+                                                        ContainerSymbol):
+                # We've dealt with Container symbols in _add_container_symbols.
+                continue
             if other_sym.name not in self:
                 continue
             # We have a name clash.
@@ -744,7 +764,7 @@ class SymbolTable():
                             f"instance but got '{type(other_table).__name__}'")
 
         try:
-            self.check_for_clashes(other_table)
+            self.check_for_clashes(other_table, include_arguments)
         except SymbolError as err:
             raise SymbolError(
                 f"Cannot merge {other_table.view()} with {self.view()} due to "
