@@ -646,20 +646,23 @@ class InlineTrans(Transformation):
             # We don't inline symbols that have an UnsupportedType and are
             # arguments since we don't know if a simple assingment if
             # enough (e.g. pointers)
-            if isinstance(sym.interface, ArgumentInterface):
-                if isinstance(sym.datatype, UnsupportedType):
-                    raise TransformationError(
-                        f"Routine '{routine.name}' cannot be inlined because "
-                        f"it contains a Symbol '{sym.name}' which is an "
-                        f"Argument of UnsupportedType: "
-                        f"'{sym.datatype.declaration}'")
+            ## FIXME
+            #if isinstance(sym.interface, ArgumentInterface):
+            #    if isinstance(sym.datatype, UnsupportedType):
+            #        raise TransformationError(
+            #            f"Routine '{routine.name}' cannot be inlined because "
+            #            f"it contains a Symbol '{sym.name}' which is an "
+            #            f"Argument of UnsupportedType: "
+            #            f"'{sym.datatype.declaration}'")
             # We don't inline symbols that have an UnknownInterface, as we
             # don't know how they are brought into this scope.
-            if isinstance(sym.interface, UnknownInterface):
-                raise TransformationError(
-                    f"Routine '{routine.name}' cannot be inlined because it "
-                    f"contains a Symbol '{sym.name}' with an UnknownInterface:"
-                    f" '{sym.datatype.declaration}'")
+            ## FIXME
+            #if isinstance(sym.interface, UnknownInterface):
+                #print("Unknown Interface")
+                #raise TransformationError(
+                #    f"Routine '{routine.name}' cannot be inlined because it "
+                #    f"contains a Symbol '{sym.name}' with an UnknownInterface:"
+                #    f" '{sym.datatype.declaration}'")
             # Check that there are no static variables in the routine (because
             # we don't know whether the routine is called from other places).
             if (isinstance(sym.interface, StaticInterface) and

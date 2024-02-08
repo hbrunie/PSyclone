@@ -731,6 +731,9 @@ class SymbolTable():
                             f" to the corresponding container in the "
                             f"current table.")
                 else:
+                    if old_sym.is_commonblock:
+                        continue
+
                     # A Symbol with the same name already exists so we rename
                     # the one that we are adding. (We don't just create a new
                     # Symbol because we need to preserve any References to it.)
@@ -1026,8 +1029,7 @@ class SymbolTable():
                             f"'{type(symbol).__name__}'.")
 
         # pylint: disable=unidiomatic-typecheck
-        if not (isinstance(symbol, (ContainerSymbol, RoutineSymbol)) or
-                type(symbol) is Symbol):
+        if not (isinstance(symbol, (ContainerSymbol, RoutineSymbol)) or isinstance(symbol, Symbol)):
             raise NotImplementedError(
                 f"remove() currently only supports generic Symbol, "
                 f"ContainerSymbol and RoutineSymbol types but got: "
@@ -1575,10 +1577,11 @@ class SymbolTable():
                 f"Cannot rename symbol '{symbol.name}' because it is a routine"
                 f" argument and as such may be named in a Call.")
 
-        if symbol.is_commonblock:
-            raise SymbolError(
-                f"Cannot rename symbol '{symbol.name}' because it has a "
-                f"CommonBlock interface.")
+        #if symbol.is_commonblock:
+        #    print("Common block found")
+            #raise SymbolError(
+            #    f"Cannot rename symbol '{symbol.name}' because it has a "
+            #    f"CommonBlock interface.")
 
         if not isinstance(name, str):
             raise TypeError(
