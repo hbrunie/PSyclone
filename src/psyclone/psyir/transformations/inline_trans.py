@@ -672,7 +672,7 @@ class InlineTrans(Transformation):
         # We can't handle a clash between (apparently) different symbols that
         # share a name but are imported from different containers.
         try:
-            table.check_for_clashes(routine_table)
+            table.check_for_clashes(routine_table, False)
         except SymbolError as err:
             raise TransformationError(
                 f"One or more symbols from routine '{routine.name}' cannot be "
